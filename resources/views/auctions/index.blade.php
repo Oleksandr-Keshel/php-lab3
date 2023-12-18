@@ -19,14 +19,14 @@
             <th>Edit btn</th>
             <th>Delete btn</th>
         </tr>
-        @foreach($auctions as $auction) 
+        @foreach($auctions as $auction)
         <tr>
-            <td>{{$auction->code}}<td>
-            <td>{{$auction->lotName}}<td>
-            <td>{{$auction->startDate}}<td>
-            <td>{{$auction->finishDate}}<td>
-            <td>{{$auction->startPrice}}<td>
-            <td>{{$auction->finalPrice}}<td>
+            <td>{{$auction->code}}</td>
+            <td>{{$auction->lotName}}</td>
+            <td>{{$auction->startDate}}</td>
+            <td>{{$auction->finishDate}}</td>
+            <td>{{$auction->startPrice}}</td>
+            <td>{{$auction->finalPrice}}</td>
             <td>
                 <a href="/auctions/{{$auction->code}}"><button>Show</button></a>
             </td>
@@ -39,36 +39,13 @@
                 @method('DELETE')
                 <button>Delete</button>
                 </form>
-            <td>
+            </td>
         </tr>
         @endforeach
     </table>
     <a href="/auctions/create">
         <button>Create</button>
     </a>
-    <br />
-    <br />
-
-    <table border="1">
-        <tr>
-            <th>Code</th>
-            <th>Lot Name</th>
-            <th>Start Date</th>
-            <th>Finish Date</th>
-            <th>Start Price</th>
-            <th>Final Price</th>
-        </tr>
-        <?php foreach ($auctions as $auction):?> 
-        <tr>
-            <td><?php echo $auction->code ?></td>
-            <td><?php echo $auction->lotName ?></td>
-            <td><?php echo $auction->startDate ?></td>
-            <td><?php echo $auction->finishDate ?></td>
-            <td><?php echo $auction->startPrice ?></td>
-            <td><?php echo $auction->finalPrice ?></td>
-        </tr>
-        <?php endforeach; ?>
-    </table>
     
     <p>{{session('success')}}</p>
 </body>
