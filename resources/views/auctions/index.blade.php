@@ -18,6 +18,7 @@
             <th>Show btn</th>
             <th>Edit btn</th>
             <th>Delete btn</th>
+
         </tr>
         @foreach($auctions as $auction)
         <tr>
@@ -30,15 +31,21 @@
             <td>
                 <a href="/auctions/{{$auction->code}}"><button>Show</button></a>
             </td>
+
             <td>
+            @can('edit-auction', $auction)
                 <a href="/auctions/{{$auction->code}}/edit"><button>Edit</button></a>
+            @endcan
             </td>
+
             <td>
+            @can('delete-auction', $auction)
                 <form action="/auctions/{{ $auction->code}}" method="POST">
                 @csrf
                 @method('DELETE')
                 <button>Delete</button>
                 </form>
+            @endcan
             </td>
         </tr>
         @endforeach
@@ -46,7 +53,7 @@
     <a href="/auctions/create">
         <button>Create</button>
     </a>
-    
+
     <p>{{session('success')}}</p>
 </body>
 </html>
