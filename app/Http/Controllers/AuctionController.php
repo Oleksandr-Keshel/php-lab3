@@ -4,22 +4,41 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Auction;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class AuctionController extends Controller
 {
 
     public function index(){
+        $user = Auth::user(); // Retrieve the currently authenticated user
         $auctions = Auction::all();
-        return view('auctions.index', ['auctions' => $auctions]);
+        if (Gate::forUser($user)->allows('view-all-auctions')) {
+            return view('auctions.index', ['auctions' => $auctions]);
+        } else {
+            abort(403);
+        }
+
     }
 
     public function show($code){
-        $auction = Auction::findOrFail($code);
-        return view('auctions.show', ['auction' => $auction]);
+        $user = Auth::user();
+        if (Gate::forUser($user)->allows('view-auction')) {
+            $auction = Auction::findOrFail($code);
+            return view('auctions.show', ['auction' => $auction]);
+        } else {
+            abort(403);
+        }
+
     }
 
     public function create(){
-        return view('auctions.create');
+        $user = Auth::user();
+        if (Gate::forUser($user)->allows('create-auction')) {
+            return view('auctions.create');
+        } else {
+            abort(403);
+        }
     }
 
     public function store(){
@@ -30,14 +49,22 @@ class AuctionController extends Controller
         $auction->finishDate = request('finishDate');
         $auction->startPrice = request('startPrice');
         $auction->finalPrice = request('finalPrice');
+        $auction->creator_user_id = Auth::id();
 
         $auction->save();
         return redirect('/auctions')->with('success', 'Auction was successfully created!');
     }
 
     public function edit($code){
+        $user = Auth::user();
         $auction = Auction::findOrFail($code);
-        return view('auctions.edit', ['auction' => $auction]);
+        if(Gate::forUser($user)->allows('edit-auction', $auction)){
+            return view('auctions.edit', ['auction' => $auction]);
+        } else{
+            abort(403);
+        }
+
+
     }
 
     public function update($code, Request $request){
@@ -53,9 +80,17 @@ class AuctionController extends Controller
         return redirect('/auctions')->with('success', 'Auction was successfully updated!');
     }
     public function destroy($code){
+        $user = Auth::user();
         $auction = Auction::findOrFail($code);
-        $auction->delete();
-        return redirect('/auctions')->with('success', 'Auction was successfully deleted!');;
+        if(Gate::forUser($user)->allows('delete-auction', $auction)){
+            $auction->delete();
+            return redirect('/auctions')->with('success', 'Auction was successfully deleted!');
+        } else{
+            abort(403);
+        }
+
+
+
     }
 
 }
