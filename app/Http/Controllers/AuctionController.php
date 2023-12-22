@@ -41,14 +41,21 @@ class AuctionController extends Controller
         }
     }
 
-    public function store(){
+    public function store(Request $request){
+        $validated = $request->validate([
+            'lotName' => 'required',
+            'startDate' => 'required|date|before:tomorrow',
+            'finishDate' => 'required|date|after_or_equal:startDate|before:tomorrow',
+            'startPrice' => 'required|integer|min:1',
+            'finalPrice' => 'required|integer|gte:startPrice',
+        ]);
         $auction = new Auction();
 
-        $auction->lotName = request('lotName');
-        $auction->startDate = request('startDate');
-        $auction->finishDate = request('finishDate');
-        $auction->startPrice = request('startPrice');
-        $auction->finalPrice = request('finalPrice');
+        $auction->lotName = $request->input('lotName');
+        $auction->startDate = $request->input('startDate');
+        $auction->finishDate = $request->input('finishDate');
+        $auction->startPrice = $request->input('startPrice');
+        $auction->finalPrice = $request->input('finalPrice');
         $auction->creator_user_id = Auth::id();
 
         $auction->save();
@@ -70,6 +77,14 @@ class AuctionController extends Controller
     public function update($code, Request $request){
         $auction = Auction::findOrFail($code);
 
+        $validated = $request->validate([
+            'lotName' => 'required',
+            'startDate' => 'required|date|before:tomorrow',
+            'finishDate' => 'required|date|after_or_equal:startDate|before:tomorrow',
+            'startPrice' => 'required|integer|min:1',
+            'finalPrice' => 'required|integer|gte:startPrice',
+        ]);
+        
         $auction->lotName = $request->input('lotName');
         $auction->startDate = $request->input('startDate');
         $auction->finishDate = $request->input('finishDate');
